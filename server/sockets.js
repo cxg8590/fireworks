@@ -10,6 +10,7 @@ const physics = require('./physics.js');
 const characters = {};
 */
 let rockets = [];
+let colors = [];
 // our socketio instance
 let io;
 
@@ -40,6 +41,9 @@ const setupSockets = (ioServer) => {
               y: data.y,
               ht: data.ht,
               vel: data.velY,
+              ang: data.ang,
+              out: "000000",
+              in: "FFFFFF",
               id: hash
           };
           console.log("temp y: " + tempRocket.y);
@@ -47,6 +51,10 @@ const setupSockets = (ioServer) => {
           io.sockets.in('room1').emit('getID', hash);
         physics.addRocket(tempRocket);
       });
+      
+      socket.on("colorPack", (data) => {
+          colors.push(data);
+      })
 
     // when the user disconnects
     socket.on('disconnect', () => {
@@ -65,6 +73,14 @@ const setupSockets = (ioServer) => {
 
 const handleFlight = (e) => {
     rockets = e;
+    for(var i = 0;i < rockets.length; i++){
+        for(var j = 0;j < colors.length; j++){
+            if(rockets[i].id == colors[j].id){
+                rockets[i].out = colors[j].out;
+                rockets[i].in = colors[j].in;
+            }
+        }
+    }
     io.sockets.in('room1').emit('soaring', rockets);
 };
 

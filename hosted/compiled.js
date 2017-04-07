@@ -15,6 +15,7 @@ var launching = function launching(e) {
         x: e.x,
         y: e.y,
         ht: e.ht,
+        ang: e.ang,
         velY: e.velY
     };
     socket.emit("launch", tempPackage);
@@ -38,25 +39,25 @@ var mainUpdate = function mainUpdate() {
     ctx.arc(currentRocket.x, 450, 10, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.fill();
-
+    /*
     //rest
-    for (var i = 0; i < rockets.length; i++) {
-        // console.log("inner color: "+rockets[rockets.length - 1].in);
+    for(var i = 0; i < rockets.length; i++){
+       // console.log("inner color: "+rockets[rockets.length - 1].in);
         //outter
         ctx.fillStyle = "#" + rockets[i].out;
         ctx.beginPath();
-        ctx.arc(rockets[i].x, 450, 20, 0, 2 * Math.PI);
+        ctx.arc(rockets[i].x,450,20,0,2*Math.PI);
         ctx.stroke();
         ctx.fill();
-
+        
         //inner
         ctx.fillStyle = "#" + rockets[i].in;
         ctx.beginPath();
-        ctx.arc(rockets[i].x, 450, 10, 0, 2 * Math.PI);
+        ctx.arc(rockets[i].x,450,10,0,2*Math.PI);
         ctx.stroke();
         ctx.fill();
     }
-
+    */
     //motion
     for (var i = 0; i < launchingRockets.length; i++) {
         //console.log("inner color: "+launchingRockets[i].y);
@@ -136,10 +137,12 @@ var minUpdate = function minUpdate() {
     ctx2.stroke();
     ctx2.restore();
 
+    var angl = (angle - 270) / 2;
+
     rocket = {
         out: outerColor,
         in: innerColor,
-        ang: angle,
+        ang: angl,
         x: 0,
         y: 450,
         time: timer,
@@ -1888,6 +1891,13 @@ var init = function init() {
 
     socket.on("getID", function (data) {
         launchingRockets[launchingRockets.length - 1].id = data;
+
+        var colorPack = {
+            out: launchingRockets[launchingRockets.length - 1].out,
+            in: launchingRockets[launchingRockets.length - 1].in,
+            id: data
+        };
+        socket.emit("colorPack", colorPack);
     });
 
     socket.on('soaring', function (data) {
@@ -1902,6 +1912,8 @@ var init = function init() {
                     if (data[i].id == launchingRockets[j].id) {
                         launchingRockets[j].x = data[i].x;
                         launchingRockets[j].y = data[i].y;
+                        /*launchingRockets[j].out = data[i].out;
+                        launchingRockets[j].in = data[i].in;*/
                         mainUpdate();
                         break;
                     }

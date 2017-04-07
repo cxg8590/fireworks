@@ -48,6 +48,13 @@ const init = () => {
     
     socket.on("getID", (data) => {
         launchingRockets[launchingRockets.length -1].id = data;
+        
+        var colorPack = {
+            out: launchingRockets[launchingRockets.length -1].out,
+            in: launchingRockets[launchingRockets.length -1].in,
+            id: data
+        };
+        socket.emit("colorPack",colorPack);
     });
   
     socket.on('soaring', (data) => {
@@ -62,6 +69,8 @@ const init = () => {
                 if(data[i].id == launchingRockets[j].id){
                     launchingRockets[j].x = data[i].x;
                     launchingRockets[j].y = data[i].y;
+                    /*launchingRockets[j].out = data[i].out;
+                    launchingRockets[j].in = data[i].in;*/
                     mainUpdate();
                     break;
                 }

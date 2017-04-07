@@ -15,6 +15,11 @@ const gravity = () => {
         if(rockets[i].ht >= rockets[i].y){
             rockets[i].vel *= -1;
         }
+        rockets[i].x += rockets[i].ang * .1;
+        if(rockets[i].x >= 500 || rockets[i].x <= 0){
+            rockets[i].ang *= -1;
+        }
+        
     }
     sockets.handleFlight(rockets);
     }

@@ -57,10 +57,12 @@ const minUpdate = () => {
     ctx2.stroke();
     ctx2.restore();
     
+    var angl = (angle -270)/2;
+    
     rocket = {
         out : outerColor,
         in : innerColor,
-        ang : angle,
+        ang : angl,
         x : 0,
         y : 450,
         time : timer,

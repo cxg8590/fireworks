@@ -14,6 +14,7 @@ const launching = (e) => {
             x: e.x,
             y: e.y,
             ht: e.ht,
+            ang :e.ang,
             velY: e.velY
         };
         socket.emit("launch",tempPackage);
@@ -37,7 +38,7 @@ const mainUpdate = () => {
     ctx.arc(currentRocket.x,450,10,0,2*Math.PI);
     ctx.stroke();
     ctx.fill();
-    
+    /*
     //rest
     for(var i = 0; i < rockets.length; i++){
        // console.log("inner color: "+rockets[rockets.length - 1].in);
@@ -55,7 +56,7 @@ const mainUpdate = () => {
         ctx.stroke();
         ctx.fill();
     }
-    
+    */
     //motion
     for(var i = 0; i < launchingRockets.length; i++){
         //console.log("inner color: "+launchingRockets[i].y);
