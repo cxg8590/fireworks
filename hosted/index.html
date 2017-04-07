@@ -39,9 +39,7 @@
     <p>time to launch</p>
     <input type="range"  min="0" max="3000" value="3000" steps="50" oninput="setTimer(this.value)"/>
     <p>height</p>
-    <input type="range"  min="0" max="400" value="400" steps="50" oninput="setHeight(this.value)"/>
-    <p>This will lag severely when the window is not in focus due to the event loop being drastically slowed.</p>
-    <p>It may also jitter because of inconsistent timing of packets arriving. Some of that has been mitigated by checking the times on packets, but it won't account for any lag, so there might be jitter or jumps. This is avoided with a much more advanced technique called "play out delay", but depending on the implementation, that might be under very heavy patents.</p>
+    <input type="range"  min="50" max="500" value="400" steps="50" oninput="setHeight(this.value)"/>
 <script>
         function test(e){
             console.log("test color: " + e);
