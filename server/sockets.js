@@ -37,13 +37,22 @@ const setupSockets = (ioServer) => {
       const hash = xxh.h32(`${socket.id}${new Date().getTime()}`, 0xCAFEBABE).toString(16);
       console.log(`launching: ${hash}`);
       const tempRocket = {
+        outR: data.outR,
+        outG: data.outG,
+        outB: data.outB,
+        inR: data.inR,
+        inG: data.inG,
+        inB: data.inB,
         x: data.x,
         y: data.y,
         ht: data.ht,
         vel: data.velY,
         ang: data.ang,
-        out: '000000',
-        in: 'FFFFFF',
+        fus: data.fus,
+        up: data.up,
+        ex: data.ex,
+        /*out: '000000',
+        in: 'FFFFFF',*/
         id: hash,
       };
       console.log(`temp y: ${tempRocket.y}`);
@@ -82,6 +91,12 @@ const handleFlight = (e) => {
     }
   }
   io.sockets.in('room1').emit('soaring', rockets);
+    for (let i = 0; i < rockets.length; i++) {
+        if(rockets[i].ex){
+          //console.log(`explode`);
+            rockets.splice(i,1);
+        }
+    }
 };
 
 module.exports.setupSockets = setupSockets;

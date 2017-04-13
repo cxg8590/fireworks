@@ -12,16 +12,18 @@ let launchingRockets = [];
 let flyingRockets = [];
 let currentRocket;
 
+var intervalID;
 
 //handler for mouse clicks
 const clickHandler = (e) => {
-    if(currentRocket != null && e.x <= 550 && e.y <= 550){
+    if(currentRocket != null && e.x <= 499 && e.y <= 500){
+        //console.log("X: " + e.x + " Y: " + e.y);
         var tempRocket = Object.assign({}, currentRocket);
         rockets.push(tempRocket);
         //rockets[rockets.length - 1].x = +currentRocket.x;
         //console.log("time" + rockets[rockets.length - 1].in);
         
-        setTimer(launching(rockets[rockets.length - 1]), rockets[rockets.length - 1].time);
+        setTimeout(launching(rockets[rockets.length - 1]), rockets[rockets.length - 1].time);
         //mainUpdate();
     }
 };
@@ -42,9 +44,6 @@ const init = () => {
   ctx2 = canvas2.getContext('2d');
 
   socket = io.connect();
-
-  //socket.on('updatedMovement', setUser); //when user joins
-  //socket.on('left', removeUser); //when a user leaves
     
     socket.on("getID", (data) => {
         launchingRockets[launchingRockets.length -1].id = data;
@@ -54,7 +53,7 @@ const init = () => {
             in: launchingRockets[launchingRockets.length -1].in,
             id: data
         };
-        socket.emit("colorPack",colorPack);
+        //socket.emit("colorPack",colorPack);
     });
   
     socket.on('soaring', (data) => {
@@ -69,9 +68,10 @@ const init = () => {
                 if(data[i].id == launchingRockets[j].id){
                     launchingRockets[j].x = data[i].x;
                     launchingRockets[j].y = data[i].y;
+                    launchingRockets[j].ex = data[i].ex;
                     /*launchingRockets[j].out = data[i].out;
                     launchingRockets[j].in = data[i].in;*/
-                    mainUpdate();
+                    //mainUpdate();
                     break;
                 }
             }
@@ -81,6 +81,9 @@ const init = () => {
             console.log("null update");
         }
     });
+    if(typeof intervalID != "undefined") clearInterval(intervalID);
+		intervalID = setInterval(mainUpdate, 30);
+    minUpdate();
   
     document.body.addEventListener('mouseup', clickHandler);
   document.body.addEventListener('mousemove', moveHandler);

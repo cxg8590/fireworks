@@ -3,7 +3,7 @@
 var moveCurrent = function moveCurrent(e) {
     //console.log("mouse x: "+e.x);
     currentRocket.x = e.x;
-    mainUpdate();
+    //mainUpdate();
 };
 
 var launching = function launching(e) {
@@ -12,10 +12,19 @@ var launching = function launching(e) {
     launchingRockets.push(e);
     //console.log("launching out: "+e.ht);
     var tempPackage = {
+        outR: e.outR,
+        outG: e.outG,
+        outB: e.outB,
+        inR: e.inR,
+        inG: e.inG,
+        inB: e.inB,
         x: e.x,
         y: e.y,
         ht: e.ht,
         ang: e.ang,
+        fus: e.fs,
+        up: e.up,
+        ex: e.ex,
         velY: e.velY
     };
     socket.emit("launch", tempPackage);
@@ -24,57 +33,77 @@ var launching = function launching(e) {
 var mainUpdate = function mainUpdate() {
     //clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var image = new Image(500, 500);
+    image.src = "https://people.rit.edu/cxg8590/realTime/fireworks/nightBG.png";
+    ctx.drawImage(image, 0, 0, 500, 500);
+    //console.log(currentRocket.x);
 
     //current
-    //outter
-    ctx.fillStyle = "#" + currentRocket.out;
-    ctx.beginPath();
-    ctx.arc(currentRocket.x, 450, 20, 0, 2 * Math.PI);
-    ctx.stroke();
-    ctx.fill();
-
-    //inner
-    ctx.fillStyle = "#" + currentRocket.in;
-    ctx.beginPath();
-    ctx.arc(currentRocket.x, 450, 10, 0, 2 * Math.PI);
-    ctx.stroke();
-    ctx.fill();
-    /*
-    //rest
-    for(var i = 0; i < rockets.length; i++){
-       // console.log("inner color: "+rockets[rockets.length - 1].in);
+    if (currentRocket != null) {
         //outter
-        ctx.fillStyle = "#" + rockets[i].out;
+        ctx.fillStyle = "#" + currentRocket.out;
         ctx.beginPath();
-        ctx.arc(rockets[i].x,450,20,0,2*Math.PI);
+        ctx.arc(currentRocket.x, 450, 20, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.fill();
-        
+
         //inner
-        ctx.fillStyle = "#" + rockets[i].in;
+        ctx.fillStyle = "#" + currentRocket.in;
         ctx.beginPath();
-        ctx.arc(rockets[i].x,450,10,0,2*Math.PI);
+        ctx.arc(currentRocket.x, 450, 10, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.fill();
     }
-    */
+
     //motion
     for (var i = 0; i < launchingRockets.length; i++) {
         //console.log("inner color: "+launchingRockets[i].y);
-        //outter
-        ctx.fillStyle = "#" + launchingRockets[i].out;
-        ctx.beginPath();
-        ctx.arc(launchingRockets[i].x, launchingRockets[i].y, 20, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.fill();
+        launchingRockets[i].out = "rgb(" + launchingRockets[i].outR + "," + launchingRockets[i].outG + "," + launchingRockets[i].outB + ")";
+        launchingRockets[i].in = "rgb(" + launchingRockets[i].inR + "," + launchingRockets[i].inG + "," + launchingRockets[i].inB + ")";
 
-        //inner
-        ctx.fillStyle = "#" + launchingRockets[i].in;
-        ctx.beginPath();
-        ctx.arc(launchingRockets[i].x, launchingRockets[i].y, 10, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.fill();
+        if (launchingRockets[i].exing == false) {
+            //outter
+            console.log("out: " + launchingRockets[i].out);
+            ctx.fillStyle = launchingRockets[i].out;
+            console.log("style: " + ctx.fillStyle);
+            console.log("in: " + launchingRockets[i].in);
+            ctx.beginPath();
+            ctx.arc(launchingRockets[i].x, launchingRockets[i].y, 4, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+
+            //inner
+            ctx.fillStyle = launchingRockets[i].in;
+            ctx.beginPath();
+            ctx.arc(launchingRockets[i].x, launchingRockets[i].y, 2, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+
+            //particles
+            spark(launchingRockets[i], launchingRockets[i].in);
+        }
+
+        if (launchingRockets[i].exing) {
+            //particles
+            spark(launchingRockets[i], launchingRockets[i].out);
+        }
+
+        //explode
+        if (launchingRockets[i].ex) {
+            launchingRockets[i].ex = false;
+            launchingRockets[i].exing = true;
+            console.log("Boom");
+            explode(i);
+            outspark(launchingRockets[i]);
+            setTimeout(function () {
+                launchingRockets.splice(i, 1);
+            }, 1000);
+        }
     }
+    particles.forEach(function (e) {
+        sparkUpdate(e);
+    });
+    outsparkUpdate();
 };
 "use strict";
 
@@ -83,17 +112,30 @@ var innerColor = "CC66FF";
 var angle = 90 + 180;
 var timer = 3000;
 var height = 100;
+var fuse = 1;
+var outR;
+var outG;
+var outB;
+var inR;
+var inG;
+var inB;
 
 var rocket;
 
 var setOuterColor = function setOuterColor(e) {
-    console.log("outter Set: " + e);
+    //console.log("outter Set: " + e);
     outerColor = e;
+    outR = e.rgb[0];
+    outG = e.rgb[1];
+    outB = e.rgb[2];
     minUpdate();
 };
 var setInnerColor = function setInnerColor(e) {
-    console.log("inner Set: " + e);
+    //console.log("inner Set: " + e);
     innerColor = e;
+    inR = e.rgb[0];
+    inG = e.rgb[1];
+    inB = e.rgb[2];
     minUpdate();
 };
 var setAngle = function setAngle(e) {
@@ -110,6 +152,10 @@ var setHeight = function setHeight(e) {
     height = e;
     height *= -1;
     height += 500;
+    minUpdate();
+};
+var setFuse = function setFuse(e) {
+    fuse = e / 100 - 1;
     minUpdate();
 };
 var minUpdate = function minUpdate() {
@@ -142,17 +188,145 @@ var minUpdate = function minUpdate() {
     rocket = {
         out: outerColor,
         in: innerColor,
+        outR: outR,
+        outG: outG,
+        outB: outB,
+        inR: inR,
+        inG: inG,
+        inB: inB,
         ang: angl,
         x: 0,
         y: 450,
         time: timer,
         velY: 2.5,
         ht: height,
+        fs: fuse,
+        up: true,
+        ex: false,
+        exing: false,
         id: 0
     };
 
     currentRocket = rocket;
 };
+'use strict';
+
+var MAX_PARTICLES = 100;
+
+var particles = [];
+var pool = [];
+var outSparks = [];
+
+function Particle(x, y, radius) {
+    this.init(x, y, radius);
+}
+
+Particle.prototype = {
+    init: function init(x, y, radius) {
+        this.alive = true;
+        this.radius = radius || 10;
+        this.wander = 0.15;
+        this.theta = Math.random(Math.PI * 2);
+        this.drag = 0.92;
+        this.color = '#19B217';
+        this.x = x || 0.0;
+        this.y = y || 0.0;
+        this.vx = 0.0;
+        this.vy = 0.0;
+    },
+    move: function move() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= this.drag;
+        this.vy *= this.drag;
+        this.theta += Math.random(-0.5, 0.5) * this.wander;
+        this.vx += Math.sin(this.theta) * 0.1;
+        this.vy += Math.cos(this.theta) * 0.1;
+        this.radius *= 0.96;
+        this.alive = this.radius > 0.5;
+    },
+    draw: function draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
+};
+
+var spark = function spark(roc, col) {
+    var particle, theta, force;
+    if (particles.length >= MAX_PARTICLES) pool.push(particles.shift());
+    particle = pool.length ? pool.pop() : new Particle();
+    particle.init(roc.x, roc.y, Math.random(5, 40));
+    particle.wander = Math.random(0.5, 2.0);
+    particle.color = col;
+    particle.drag = Math.random(0.9, 0.99);
+    theta = Math.random(Math.PI * 2);
+    force = Math.random(2, 8);
+    particle.vx = Math.sin(theta) * force;
+    particle.vy = Math.cos(theta) * force;
+    particles.push(particle);
+};
+
+var sparkUpdate = function sparkUpdate(e) {
+    e.move();
+    e.draw();
+};
+
+var explode = function explode(roc) {
+    setTimeout(function () {
+        launchingRockets.splice(roc, 1);
+    }, 1000);
+    //spark(roc);
+    //sparkUpdate(roc);
+};
+
+var outspark = function outspark(roc) {
+    for (var i = 0; i < 6; i++) {
+        var angle = 45 * i;
+        var outSparkle = { centx: roc.x, centy: roc.y, x: 0, y: 0, dist: 2, ang: angle, out: roc.out, in: roc.in, exing: true };
+
+        outSparkle.x = roc.x + 2 * Math.cos(angle);
+        outSparkle.y = roc.y + 2 * Math.sin(angle);
+
+        outSparks.push(outSparkle);
+        var length = outSparks.length;
+        //setTimeout(function(){console.log("outspark decay: " + length)}, 1000);
+    }
+};
+
+var outsparkUpdate = function outsparkUpdate() {
+
+    for (var i = 0; i < outSparks.length; i++) {
+
+        outSparks[i].dist++; // = outSparks[i].dist;
+        outSparks[i].x = outSparks[i].centx + outSparks[i].dist * Math.cos(outSparks[i].ang + outSparks[i].dist);
+        outSparks[i].y = outSparks[i].centy + outSparks[i].dist * Math.sin(outSparks[i].ang + outSparks[i].dist);
+
+        /*ctx.beginPath();
+        ctx.arc( outSparks[i].x, outSparks[i].y, 1, 0, Math.PI * 2  );
+        ctx.fillStyle = "FF00FF";
+        ctx.fill();*/
+        spark(outSparks[i]);
+    }
+};
+
+/*if(sketch != null){sketch.spawn = function( roc ) {
+    
+    var particle, theta, force;
+    if ( particles.length >= MAX_PARTICLES )
+        pool.push( particles.shift() );
+    particle = pool.length ? pool.pop() : new Particle();
+    particle.init( roc.x, roc.y, random( 5, 40 ) );
+    particle.wander = random( 0.5, 2.0 );
+    particle.color = roc.out;
+    particle.drag = random( 0.9, 0.99 );
+    theta = random( TWO_PI );
+    force = random( 2, 8 );
+    particle.vx = sin( theta ) * force;
+    particle.vy = cos( theta ) * force;
+    particles.push( particle );
+};}*/
 /**
  * jscolor - JavaScript Color Picker
  *
@@ -1857,15 +2031,18 @@ var launchingRockets = [];
 var flyingRockets = [];
 var currentRocket = void 0;
 
+var intervalID;
+
 //handler for mouse clicks
 var clickHandler = function clickHandler(e) {
-    if (currentRocket != null && e.x <= 550 && e.y <= 550) {
+    if (currentRocket != null && e.x <= 499 && e.y <= 500) {
+        //console.log("X: " + e.x + " Y: " + e.y);
         var tempRocket = Object.assign({}, currentRocket);
         rockets.push(tempRocket);
         //rockets[rockets.length - 1].x = +currentRocket.x;
         //console.log("time" + rockets[rockets.length - 1].in);
 
-        setTimer(launching(rockets[rockets.length - 1]), rockets[rockets.length - 1].time);
+        setTimeout(launching(rockets[rockets.length - 1]), rockets[rockets.length - 1].time);
         //mainUpdate();
     }
 };
@@ -1886,9 +2063,6 @@ var init = function init() {
 
     socket = io.connect();
 
-    //socket.on('updatedMovement', setUser); //when user joins
-    //socket.on('left', removeUser); //when a user leaves
-
     socket.on("getID", function (data) {
         launchingRockets[launchingRockets.length - 1].id = data;
 
@@ -1897,7 +2071,7 @@ var init = function init() {
             in: launchingRockets[launchingRockets.length - 1].in,
             id: data
         };
-        socket.emit("colorPack", colorPack);
+        //socket.emit("colorPack",colorPack);
     });
 
     socket.on('soaring', function (data) {
@@ -1912,9 +2086,10 @@ var init = function init() {
                     if (data[i].id == launchingRockets[j].id) {
                         launchingRockets[j].x = data[i].x;
                         launchingRockets[j].y = data[i].y;
+                        launchingRockets[j].ex = data[i].ex;
                         /*launchingRockets[j].out = data[i].out;
                         launchingRockets[j].in = data[i].in;*/
-                        mainUpdate();
+                        //mainUpdate();
                         break;
                     }
                 }
@@ -1923,6 +2098,9 @@ var init = function init() {
             console.log("null update");
         }
     });
+    if (typeof intervalID != "undefined") clearInterval(intervalID);
+    intervalID = setInterval(mainUpdate, 30);
+    minUpdate();
 
     document.body.addEventListener('mouseup', clickHandler);
     document.body.addEventListener('mousemove', moveHandler);

@@ -7,6 +7,7 @@
     "build": "babel ./client --out-file ./hosted/compiled.js",
     "watch": "babel --watch ./client --out-file ./hosted/compiled.js",
     "nodemon": "nodemon --watch ./server ./server/app.js",
+    "serve": "babel --watch ./client --out-file ./hosted/compiled.js | nodemon --watch ./server ./server/app.js",
     "start": "node ./server/app.js",
     "pretest": "eslint ./server --fix",
     "test": "echo \"Tests complete\""

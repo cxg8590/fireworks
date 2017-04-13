@@ -3,17 +3,30 @@ var innerColor = "CC66FF";
 var angle = 90+180;
 var timer = 3000;
 var height = 100;
+var fuse = 1;
+var outR;
+var outG;
+var outB;
+var inR;
+var inG;
+var inB;
 
 var rocket;
 
 const setOuterColor = (e) => {
-    console.log("outter Set: " + e);
+    //console.log("outter Set: " + e);
     outerColor = e;
+    outR = e.rgb[0];
+    outG = e.rgb[1];
+    outB = e.rgb[2];
     minUpdate();
 };
 const setInnerColor = (e) => {
-    console.log("inner Set: " + e);
+    //console.log("inner Set: " + e);
     innerColor = e;
+    inR = e.rgb[0];
+    inG = e.rgb[1];
+    inB = e.rgb[2];
     minUpdate();
 };
 const setAngle = (e) =>{
@@ -30,6 +43,10 @@ const setHeight = (e) =>{
     height = e;
     height *= -1;
     height += 500;
+    minUpdate();
+}
+const setFuse = (e) =>{
+    fuse = (e/100) - 1;
     minUpdate();
 }
 const minUpdate = () => {
@@ -62,12 +79,22 @@ const minUpdate = () => {
     rocket = {
         out : outerColor,
         in : innerColor,
+        outR: outR,
+        outG: outG,
+        outB: outB,
+        inR: inR,
+        inG: inG,
+        inB: inB,
         ang : angl,
         x : 0,
         y : 450,
         time : timer,
         velY: 2.5,
         ht: height,
+        fs: fuse,
+        up: true,
+        ex: false,
+        exing: false,
         id: 0
     };
     
