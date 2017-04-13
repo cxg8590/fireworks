@@ -58,15 +58,12 @@ var mainUpdate = function mainUpdate() {
     //motion
     for (var i = 0; i < launchingRockets.length; i++) {
         //console.log("inner color: "+launchingRockets[i].y);
-        launchingRockets[i].out = "rgb(" + launchingRockets[i].outR + "," + launchingRockets[i].outG + "," + launchingRockets[i].outB + ")";
-        launchingRockets[i].in = "rgb(" + launchingRockets[i].inR + "," + launchingRockets[i].inG + "," + launchingRockets[i].inB + ")";
+        launchingRockets[i].out = rgb2hex(launchingRockets[i].outR, launchingRockets[i].outG, launchingRockets[i].outB);
+        launchingRockets[i].in = rgb2hex(launchingRockets[i].inR, launchingRockets[i].inG, launchingRockets[i].inB);
 
         if (launchingRockets[i].exing == false) {
             //outter
-            console.log("out: " + launchingRockets[i].out);
             ctx.fillStyle = launchingRockets[i].out;
-            console.log("style: " + ctx.fillStyle);
-            console.log("in: " + launchingRockets[i].in);
             ctx.beginPath();
             ctx.arc(launchingRockets[i].x, launchingRockets[i].y, 4, 0, 2 * Math.PI);
             ctx.stroke();
@@ -105,6 +102,11 @@ var mainUpdate = function mainUpdate() {
     });
     outsparkUpdate();
 };
+
+function rgb2hex(red, green, blue) {
+    var rgb = blue | green << 8 | red << 16;
+    return '#' + (0x1000000 + rgb).toString(16).slice(1);
+}
 "use strict";
 
 var outerColor = "CC66FF";
@@ -291,8 +293,10 @@ var outspark = function outspark(roc) {
 
         outSparks.push(outSparkle);
         var length = outSparks.length;
-        //setTimeout(function(){console.log("outspark decay: " + length)}, 1000);
     }
+    setTimeout(function () {
+        outSparks.splice(0, 6);
+    }, 3000);
 };
 
 var outsparkUpdate = function outsparkUpdate() {

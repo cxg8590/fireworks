@@ -77,8 +77,8 @@ const outspark = (roc) => {
         
         outSparks.push(outSparkle);
         var length = outSparks.length;
-        //setTimeout(function(){console.log("outspark decay: " + length)}, 1000);
     }
+    setTimeout(function(){outSparks.splice(0,6)}, 3000);
 };
 
 const outsparkUpdate = () => {
