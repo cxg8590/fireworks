@@ -56,7 +56,7 @@ const setupSockets = (ioServer) => {
         id: hash,
       };
       console.log(`temp y: ${tempRocket.y}`);
-      console.log(`temp ht: ${tempRocket.ht}`);
+      //console.log(`temp ht: ${tempRocket.ht}`);
       io.sockets.in('room1').emit('getID', hash);
       physics.addRocket(tempRocket);
     });

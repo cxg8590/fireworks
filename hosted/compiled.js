@@ -58,15 +58,12 @@ var mainUpdate = function mainUpdate() {
     //motion
     for (var i = 0; i < launchingRockets.length; i++) {
         //console.log("inner color: "+launchingRockets[i].y);
-        launchingRockets[i].out = "rgb(" + launchingRockets[i].outR + "," + launchingRockets[i].outG + "," + launchingRockets[i].outB + ")";
-        launchingRockets[i].in = "rgb(" + launchingRockets[i].inR + "," + launchingRockets[i].inG + "," + launchingRockets[i].inB + ")";
+        launchingRockets[i].out = rgb2hex(launchingRockets[i].outR, launchingRockets[i].outG, launchingRockets[i].outB);
+        launchingRockets[i].in = rgb2hex(launchingRockets[i].inR, launchingRockets[i].inG, launchingRockets[i].inB);
 
         if (launchingRockets[i].exing == false) {
             //outter
-            console.log("out: " + launchingRockets[i].out);
             ctx.fillStyle = launchingRockets[i].out;
-            console.log("style: " + ctx.fillStyle);
-            console.log("in: " + launchingRockets[i].in);
             ctx.beginPath();
             ctx.arc(launchingRockets[i].x, launchingRockets[i].y, 4, 0, 2 * Math.PI);
             ctx.stroke();
@@ -105,6 +102,11 @@ var mainUpdate = function mainUpdate() {
     });
     outsparkUpdate();
 };
+
+function rgb2hex(red, green, blue) {
+    var rgb = blue | green << 8 | red << 16;
+    return '#' + (0x1000000 + rgb).toString(16).slice(1);
+}
 "use strict";
 
 var outerColor = "CC66FF";
@@ -113,6 +115,7 @@ var angle = 90 + 180;
 var timer = 3000;
 var height = 100;
 var fuse = 1;
+var vel = -8;
 var outR;
 var outG;
 var outB;
@@ -148,14 +151,23 @@ var setTimer = function setTimer(e) {
     timer = e;
     minUpdate();
 };
-var setHeight = function setHeight(e) {
+var setVel = function setVel(e) {
+    vel = e;
+    vel *= -1;
+    vel /= 10;
+    minUpdate();
+};
+
+/*const setHeight = (e) =>{
     height = e;
     height *= -1;
     height += 500;
     minUpdate();
-};
+}*/
+
 var setFuse = function setFuse(e) {
-    fuse = e / 100 - 1;
+    fuse = e / 10 - 10;
+    console.log("fuse: " + fuse);
     minUpdate();
 };
 var minUpdate = function minUpdate() {
@@ -183,8 +195,8 @@ var minUpdate = function minUpdate() {
     ctx2.stroke();
     ctx2.restore();
 
-    var angl = (angle - 270) / 2;
-
+    var angl = (angle - 270) / 10;
+    console.log("Angle: " + angl);
     rocket = {
         out: outerColor,
         in: innerColor,
@@ -198,7 +210,7 @@ var minUpdate = function minUpdate() {
         x: 0,
         y: 450,
         time: timer,
-        velY: 2.5,
+        velY: vel,
         ht: height,
         fs: fuse,
         up: true,
@@ -291,8 +303,10 @@ var outspark = function outspark(roc) {
 
         outSparks.push(outSparkle);
         var length = outSparks.length;
-        //setTimeout(function(){console.log("outspark decay: " + length)}, 1000);
     }
+    setTimeout(function () {
+        outSparks.splice(0, 6);
+    }, 3000);
 };
 
 var outsparkUpdate = function outsparkUpdate() {

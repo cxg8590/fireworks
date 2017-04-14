@@ -4,6 +4,7 @@ var angle = 90+180;
 var timer = 3000;
 var height = 100;
 var fuse = 1;
+var vel = -8;
 var outR;
 var outG;
 var outB;
@@ -39,14 +40,23 @@ const setTimer = (e) =>{
     timer = e;
     minUpdate();
 }
-const setHeight = (e) =>{
+const setVel = (e) =>{
+    vel = e;
+    vel *= -1;
+    vel /= 10;
+    minUpdate();
+}
+
+/*const setHeight = (e) =>{
     height = e;
     height *= -1;
     height += 500;
     minUpdate();
-}
+}*/
+
 const setFuse = (e) =>{
-    fuse = (e/100) - 1;
+    fuse = (e/10) - 10;
+    console.log("fuse: " + fuse);
     minUpdate();
 }
 const minUpdate = () => {
@@ -74,8 +84,8 @@ const minUpdate = () => {
     ctx2.stroke();
     ctx2.restore();
     
-    var angl = (angle -270)/2;
-    
+    var angl = (angle -270)/10;
+    console.log("Angle: " +angl);
     rocket = {
         out : outerColor,
         in : innerColor,
@@ -89,7 +99,7 @@ const minUpdate = () => {
         x : 0,
         y : 450,
         time : timer,
-        velY: 2.5,
+        velY: vel,
         ht: height,
         fs: fuse,
         up: true,
