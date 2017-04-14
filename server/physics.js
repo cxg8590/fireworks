@@ -3,7 +3,7 @@ const sockets = require('./sockets.js');
 
 const rockets = []; // array of attack to handle
 const grav = 0.1;
-const fuse;
+const fuse = 9.0;
 
 // computes all physics
 const gravity = () => {
