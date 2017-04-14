@@ -12,11 +12,13 @@ let launchingRockets = [];
 let flyingRockets = [];
 let currentRocket;
 
-var intervalID;
+var intervalID;682
+
+let userID;
 
 //handler for mouse clicks
 const clickHandler = (e) => {
-    if(currentRocket != null && e.x <= 499 && e.y <= 500){
+    if(currentRocket != null && e.x >= 682 && e.x <= 1181 && e.y >= 100 && e.y <= 600){
         //console.log("X: " + e.x + " Y: " + e.y);
         var tempRocket = Object.assign({}, currentRocket);
         rockets.push(tempRocket);
@@ -31,7 +33,7 @@ const clickHandler = (e) => {
 
 //handler for mouse moves
 const moveHandler = (e) => {
-    if(currentRocket != null && e.x <= 550 && e.y <= 550){
+    if(currentRocket != null && e.x >= 682 && e.x <= 1181 && e.y >= 100 && e.y <= 600){
         moveCurrent(e);
     }
 };
@@ -45,15 +47,21 @@ const init = () => {
 
   socket = io.connect();
     
+    socket.on("connectID", (data) => {
+        if(userID == null){
+            userID = data;
+        }
+    });
+    
     socket.on("getID", (data) => {
-        launchingRockets[launchingRockets.length -1].id = data;
-        
-        var colorPack = {
-            out: launchingRockets[launchingRockets.length -1].out,
-            in: launchingRockets[launchingRockets.length -1].in,
-            id: data
-        };
-        //socket.emit("colorPack",colorPack);
+        console.log("yourID: " + userID);
+        console.log("Rocket userID: " + data.user);
+        if(data.user != userID){
+            console.log("not yours");
+            launchingRockets.push(data);
+        }
+        else{console.log("Yours");}
+        launchingRockets[launchingRockets.length -1].id = data.id;
     });
   
     socket.on('soaring', (data) => {
@@ -64,7 +72,7 @@ const init = () => {
         for(var i = 0; i < data.length; i++){
             //console.log("data id" + data[i].id);
             for(var j = 0; j < launchingRockets.length; j++){              
-            //console.log("launchingRockets id" + launchingRockets[i].id);
+            //console.log("launchingRockets id" + launchingRockets[j].id);
                 if(data[i].id == launchingRockets[j].id){
                     launchingRockets[j].x = data[i].x;
                     launchingRockets[j].y = data[i].y;

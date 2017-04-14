@@ -1,7 +1,7 @@
 
 const moveCurrent = (e) => {
     //console.log("mouse x: "+e.x);
-    currentRocket.x = e.x;
+    currentRocket.x = e.x - 682;
     //mainUpdate();
 };
 
@@ -9,7 +9,7 @@ const launching = (e) => {
     //console.log("launching out: "+e.out);
     
     launchingRockets.push(e);
-    //console.log("launching out: "+e.ht);
+    console.log("launching out: "+userID);
     var tempPackage = {
             outR: e.outR,
             outG: e.outG,
@@ -24,7 +24,8 @@ const launching = (e) => {
             fus: e.fs,
             up: e.up,
             ex: e.ex,
-            velY: e.velY
+            velY: e.velY,
+            user: userID
         };
         socket.emit("launch",tempPackage);
 };
@@ -33,7 +34,7 @@ const mainUpdate = () => {
     //clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     var image = new Image(500,500);
-    image.src = "https://people.rit.edu/cxg8590/realTime/fireworks/nightBG.png";
+    image.src = "https://people.rit.edu/cxg8590/realTime/fireworks/nightSky.png";
     ctx.drawImage(image, 0, 0, 500, 500);
     //console.log(currentRocket.x);
     
@@ -42,14 +43,14 @@ const mainUpdate = () => {
     //outter
     ctx.fillStyle = "#" + currentRocket.out;
     ctx.beginPath();
-    ctx.arc(currentRocket.x,450,20,0,2*Math.PI);
+    ctx.arc(currentRocket.x,490,10,0,2*Math.PI);
     ctx.stroke();
     ctx.fill();
     
     //inner
     ctx.fillStyle = "#" + currentRocket.in;
     ctx.beginPath();
-    ctx.arc(currentRocket.x,450,10,0,2*Math.PI);
+    ctx.arc(currentRocket.x,490,5,0,2*Math.PI);
     ctx.stroke();
     ctx.fill();
     }
@@ -59,7 +60,6 @@ const mainUpdate = () => {
         //console.log("inner color: "+launchingRockets[i].y);
         launchingRockets[i].out = rgb2hex(launchingRockets[i].outR, launchingRockets[i].outG,launchingRockets[i].outB);
         launchingRockets[i].in = rgb2hex(launchingRockets[i].inR, launchingRockets[i].inG,launchingRockets[i].inB);
-        
         if(launchingRockets[i].exing == false){
         //outter
         ctx.fillStyle = launchingRockets[i].out;
@@ -67,7 +67,6 @@ const mainUpdate = () => {
         ctx.arc(launchingRockets[i].x,launchingRockets[i].y,4,0,2*Math.PI);
         ctx.stroke();
         ctx.fill();
-        
         //inner
         ctx.fillStyle = launchingRockets[i].in;
         ctx.beginPath();
@@ -90,9 +89,9 @@ const mainUpdate = () => {
             launchingRockets[i].ex = false;
             launchingRockets[i].exing = true;
             console.log("Boom");
-            explode(i);
+            explode(launchingRockets[i].id);
             outspark(launchingRockets[i]);
-            setTimeout(function(){launchingRockets.splice(i,1)}, 1000);
+            //setTimeout(function(){launchingRockets.splice(i,1)}, 1000);
         }
     }
     particles.forEach(function(e){

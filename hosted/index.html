@@ -3,23 +3,48 @@
 <head>
     <title>Fireworks</title>
     <meta charset="utf-8"/>
+    <link href="https://fonts.googleapis.com/css?family=Unica+One" rel="stylesheet">
     <style>
       html, body {
+        background: url("https://people.rit.edu/cxg8590/realTime/fireworks/mainBG.png") no-repeat;
+          background-size: cover;
         width: 100%;
         height: 100%;
         margin: 0;
         padding:0;
+        font-family: 'Unica One', cursive;
       }
       
+        #box{
+            background: url("https://people.rit.edu/cxg8590/realTime/fireworks/boxBG.png") no-repeat;
+            background-size: cover;
+            width:800px;
+            margin-left: 532px;
+            margin-top: 45px;
+            border: 2px solid;
+            border-radius: 25px;
+        }
+        #canvas{
+            margin-left: 150px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        #canvasMin{
+            position: absolute;
+            margin-left: 300px;
+        }
       canvas {
         margin: 10px;
         border: 1px solid black;
       }
+        input{
+            
+        }
       
       p {
         margin-left: 12px;
         font-size: 1.2em;
-        width: 50%; 
+        //width: 50%; 
       }
       
       .hidden {
@@ -30,21 +55,28 @@
 	<script src="/assets/compiled.js"> </script>
 </head>
 <body>
+    <div id="box">
     <canvas id="canvas" height="500" width="500">Please use an HTML 5 browser</canvas>
-    <canvas id="canvasMin" height="100" width="100">Please use an HTML 5 browser</canvas>
-    <input class="jscolor" onchange="setOuterColor(this.jscolor)" value="cc66ff">
+    
+    <div>
+        <p style="display:inline; color:#e359ff">Outer Color</p> <p style="display:inline">Inner Color</p>
+        <br>
+    <input class="jscolor" onchange="setOuterColor(this.jscolor)" value="cc66ff" style="display:inline">
     <input class="jscolor" onchange="setInnerColor(this.jscolor)" value="cc66ff">
-    <p>angle</p>
+        <canvas id="canvasMin" height="100" width="100">Please use an HTML 5 browser</canvas>   
+    <p style="color:#ffa800">Angle</p>
     <input type="range"  min="0" max="180" value="90" steps="45" oninput="setAngle(this.value)"/>
-    <p>time to launch</p>
-    <input type="range"  min="0" max="3000" value="3000" steps="50" oninput="setTimer(this.value)"/>
-    <p>height</p>
+    </div>
+    <!--<p>time to launch</p>
+    <input type="range"  min="0" max="3000" value="3000" steps="50" oninput="setTimer(this.value)"/>-->
+    <p style="color:#00f0ff">Launch Force</p>
     <input type="range"  min="30" max="95" value="80" steps="1" oninput="setVel(this.value)"/>
-    <p>fuse</p>
+    <p style="color:#ff0439">Time to Explosion</p>
     <input type="range"  min="0" max="200" value="100" steps="1" oninput="setFuse(this.value)"/>
     
-    <p>Preview your firework in the small window and launch by clicking where you want to launch it from</p>
-     <p>Play with the various sliders to customize. It will eventually use some cool lighting effects and particles, but for now it's just a box of bouncy balls</p>
+    <p style="color:#04ff2d">Preview your firework in the small window and launch by clicking where you want to launch it from</p>
+     <p style="color:#ff04b5">Play with the various sliders to customize. Angle determins what angle you will fire it at, Launch Force is how strong the upwards velocity will be, and time to Explosion is how far along the path it will go before Exploding. Inner color</p>
     <div id="particles-js"></div>
+    </div>
 </body>    
 </html>

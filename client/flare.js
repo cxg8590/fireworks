@@ -8,6 +8,7 @@ function Particle( x, y, radius ) {
             this.init( x, y, radius );
         }
 
+//Oarticle prototype, taken from sketch.js particle demo http://soulwire.github.io/sketch.js/examples/particles.html
 Particle.prototype = {
     init: function( x, y, radius ) {
         this.alive = true;
@@ -40,6 +41,7 @@ Particle.prototype = {
     }
 };
 
+//generates a particle
 const spark = (roc, col) => {
     var particle, theta, force;
     if ( particles.length >= MAX_PARTICLES )
@@ -62,7 +64,17 @@ const sparkUpdate = (e) => {
 };
 
 const explode = (roc) => {
-    setTimeout(function(){launchingRockets.splice(roc,1)}, 1000);
+    setTimeout(function(){
+        for(var i = 0; i < launchingRockets.length; i++){
+            //console.log("explode confirmed");
+            if(launchingRockets[i].id == roc){
+                //console.log("explode confirmed2");
+                launchingRockets.splice(i,1);
+            }
+        }
+    },1000);
+    //setTimeout(function(){launchingRockets.splice(roc,1)}, 1000);
+    
     //spark(roc);
     //sparkUpdate(roc);
 };

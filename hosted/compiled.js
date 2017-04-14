@@ -2,7 +2,7 @@
 
 var moveCurrent = function moveCurrent(e) {
     //console.log("mouse x: "+e.x);
-    currentRocket.x = e.x;
+    currentRocket.x = e.x - 682;
     //mainUpdate();
 };
 
@@ -10,7 +10,7 @@ var launching = function launching(e) {
     //console.log("launching out: "+e.out);
 
     launchingRockets.push(e);
-    //console.log("launching out: "+e.ht);
+    console.log("launching out: " + userID);
     var tempPackage = {
         outR: e.outR,
         outG: e.outG,
@@ -25,7 +25,8 @@ var launching = function launching(e) {
         fus: e.fs,
         up: e.up,
         ex: e.ex,
-        velY: e.velY
+        velY: e.velY,
+        user: userID
     };
     socket.emit("launch", tempPackage);
 };
@@ -34,7 +35,7 @@ var mainUpdate = function mainUpdate() {
     //clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     var image = new Image(500, 500);
-    image.src = "https://people.rit.edu/cxg8590/realTime/fireworks/nightBG.png";
+    image.src = "https://people.rit.edu/cxg8590/realTime/fireworks/nightSky.png";
     ctx.drawImage(image, 0, 0, 500, 500);
     //console.log(currentRocket.x);
 
@@ -43,14 +44,14 @@ var mainUpdate = function mainUpdate() {
         //outter
         ctx.fillStyle = "#" + currentRocket.out;
         ctx.beginPath();
-        ctx.arc(currentRocket.x, 450, 20, 0, 2 * Math.PI);
+        ctx.arc(currentRocket.x, 490, 10, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.fill();
 
         //inner
         ctx.fillStyle = "#" + currentRocket.in;
         ctx.beginPath();
-        ctx.arc(currentRocket.x, 450, 10, 0, 2 * Math.PI);
+        ctx.arc(currentRocket.x, 490, 5, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.fill();
     }
@@ -60,7 +61,6 @@ var mainUpdate = function mainUpdate() {
         //console.log("inner color: "+launchingRockets[i].y);
         launchingRockets[i].out = rgb2hex(launchingRockets[i].outR, launchingRockets[i].outG, launchingRockets[i].outB);
         launchingRockets[i].in = rgb2hex(launchingRockets[i].inR, launchingRockets[i].inG, launchingRockets[i].inB);
-
         if (launchingRockets[i].exing == false) {
             //outter
             ctx.fillStyle = launchingRockets[i].out;
@@ -68,7 +68,6 @@ var mainUpdate = function mainUpdate() {
             ctx.arc(launchingRockets[i].x, launchingRockets[i].y, 4, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.fill();
-
             //inner
             ctx.fillStyle = launchingRockets[i].in;
             ctx.beginPath();
@@ -90,11 +89,9 @@ var mainUpdate = function mainUpdate() {
             launchingRockets[i].ex = false;
             launchingRockets[i].exing = true;
             console.log("Boom");
-            explode(i);
+            explode(launchingRockets[i].id);
             outspark(launchingRockets[i]);
-            setTimeout(function () {
-                launchingRockets.splice(i, 1);
-            }, 1000);
+            //setTimeout(function(){launchingRockets.splice(i,1)}, 1000);
         }
     }
     particles.forEach(function (e) {
@@ -112,16 +109,16 @@ function rgb2hex(red, green, blue) {
 var outerColor = "CC66FF";
 var innerColor = "CC66FF";
 var angle = 90 + 180;
-var timer = 3000;
+var timer = 0;
 var height = 100;
 var fuse = 1;
 var vel = -8;
-var outR;
-var outG;
-var outB;
-var inR;
-var inG;
-var inB;
+var outR = 204;
+var outG = 102;
+var outB = 255;
+var inR = 204;
+var inG = 102;
+var inB = 255;
 
 var rocket;
 
@@ -233,6 +230,7 @@ function Particle(x, y, radius) {
     this.init(x, y, radius);
 }
 
+//Oarticle prototype, taken from sketch.js particle demo http://soulwire.github.io/sketch.js/examples/particles.html
 Particle.prototype = {
     init: function init(x, y, radius) {
         this.alive = true;
@@ -265,6 +263,7 @@ Particle.prototype = {
     }
 };
 
+//generates a particle
 var spark = function spark(roc, col) {
     var particle, theta, force;
     if (particles.length >= MAX_PARTICLES) pool.push(particles.shift());
@@ -287,8 +286,16 @@ var sparkUpdate = function sparkUpdate(e) {
 
 var explode = function explode(roc) {
     setTimeout(function () {
-        launchingRockets.splice(roc, 1);
+        for (var i = 0; i < launchingRockets.length; i++) {
+            //console.log("explode confirmed");
+            if (launchingRockets[i].id == roc) {
+                //console.log("explode confirmed2");
+                launchingRockets.splice(i, 1);
+            }
+        }
     }, 1000);
+    //setTimeout(function(){launchingRockets.splice(roc,1)}, 1000);
+
     //spark(roc);
     //sparkUpdate(roc);
 };
@@ -2045,11 +2052,13 @@ var launchingRockets = [];
 var flyingRockets = [];
 var currentRocket = void 0;
 
-var intervalID;
+var intervalID;682;
+
+var userID = void 0;
 
 //handler for mouse clicks
 var clickHandler = function clickHandler(e) {
-    if (currentRocket != null && e.x <= 499 && e.y <= 500) {
+    if (currentRocket != null && e.x >= 682 && e.x <= 1181 && e.y >= 100 && e.y <= 600) {
         //console.log("X: " + e.x + " Y: " + e.y);
         var tempRocket = Object.assign({}, currentRocket);
         rockets.push(tempRocket);
@@ -2063,7 +2072,7 @@ var clickHandler = function clickHandler(e) {
 
 //handler for mouse moves
 var moveHandler = function moveHandler(e) {
-    if (currentRocket != null && e.x <= 550 && e.y <= 550) {
+    if (currentRocket != null && e.x >= 682 && e.x <= 1181 && e.y >= 100 && e.y <= 600) {
         moveCurrent(e);
     }
 };
@@ -2077,15 +2086,22 @@ var init = function init() {
 
     socket = io.connect();
 
-    socket.on("getID", function (data) {
-        launchingRockets[launchingRockets.length - 1].id = data;
+    socket.on("connectID", function (data) {
+        if (userID == null) {
+            userID = data;
+        }
+    });
 
-        var colorPack = {
-            out: launchingRockets[launchingRockets.length - 1].out,
-            in: launchingRockets[launchingRockets.length - 1].in,
-            id: data
-        };
-        //socket.emit("colorPack",colorPack);
+    socket.on("getID", function (data) {
+        console.log("yourID: " + userID);
+        console.log("Rocket userID: " + data.user);
+        if (data.user != userID) {
+            console.log("not yours");
+            launchingRockets.push(data);
+        } else {
+            console.log("Yours");
+        }
+        launchingRockets[launchingRockets.length - 1].id = data.id;
     });
 
     socket.on('soaring', function (data) {
@@ -2096,7 +2112,7 @@ var init = function init() {
             for (var i = 0; i < data.length; i++) {
                 //console.log("data id" + data[i].id);
                 for (var j = 0; j < launchingRockets.length; j++) {
-                    //console.log("launchingRockets id" + launchingRockets[i].id);
+                    //console.log("launchingRockets id" + launchingRockets[j].id);
                     if (data[i].id == launchingRockets[j].id) {
                         launchingRockets[j].x = data[i].x;
                         launchingRockets[j].y = data[i].y;

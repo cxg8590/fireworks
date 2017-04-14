@@ -1,16 +1,16 @@
 var outerColor = "CC66FF";
 var innerColor = "CC66FF";
 var angle = 90+180;
-var timer = 3000;
+var timer = 0;
 var height = 100;
 var fuse = 1;
 var vel = -8;
-var outR;
-var outG;
-var outB;
-var inR;
-var inG;
-var inB;
+var outR = 204;
+var outG = 102;
+var outB = 255;
+var inR = 204;
+var inG = 102;
+var inB = 255;
 
 var rocket;
 

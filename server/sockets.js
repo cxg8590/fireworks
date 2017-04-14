@@ -30,6 +30,9 @@ const setupSockets = (ioServer) => {
     const socket = sock;
 
     socket.join('room1'); // join user to our socket room
+      
+    const userID = xxh.h32(`${socket.id}${new Date().getTime()}`, 0xCAFEBABE).toString(16);
+    io.sockets.in('room1').emit('connectID', userID);
 
     socket.on('launch', (data) => {
       console.log(`launching: ${data}`);
@@ -46,18 +49,22 @@ const setupSockets = (ioServer) => {
         x: data.x,
         y: data.y,
         ht: data.ht,
-        vel: data.velY,
+        vel: data.velY + Math.abs(data.ang)/2,
         ang: data.ang,
         fus: data.fus,
         up: data.up,
         ex: data.ex,
+        exing: false,
+        user: data.user,
         /*out: '000000',
         in: 'FFFFFF',*/
         id: hash,
       };
       console.log(`temp y: ${tempRocket.y}`);
+      console.log(`user: ${tempRocket.user}`);
       //console.log(`temp ht: ${tempRocket.ht}`);
-      io.sockets.in('room1').emit('getID', hash);
+        //var hashSend = {hash: hash, user: tempRocket.user};
+      io.sockets.in('room1').emit('getID', tempRocket);
       physics.addRocket(tempRocket);
     });
 
