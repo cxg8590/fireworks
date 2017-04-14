@@ -30,15 +30,16 @@ const setupSockets = (ioServer) => {
     const socket = sock;
 
     socket.join('room1'); // join user to our socket room
-      
+
     const userID = xxh.h32(`${socket.id}${new Date().getTime()}`, 0xCAFEBABE).toString(16);
     io.sockets.in('room1').emit('connectID', userID);
 
+      // adds new rocket to the list so that physics can happen to it
     socket.on('launch', (data) => {
-      console.log(`launching: ${data}`);
+      // console.log(`launching: ${data}`);
       // rockets[rockets.length -1] = data;
       const hash = xxh.h32(`${socket.id}${new Date().getTime()}`, 0xCAFEBABE).toString(16);
-      console.log(`launching: ${hash}`);
+      // console.log(`launching: ${hash}`);
       const tempRocket = {
         outR: data.outR,
         outG: data.outG,
@@ -49,21 +50,19 @@ const setupSockets = (ioServer) => {
         x: data.x,
         y: data.y,
         ht: data.ht,
-        vel: data.velY + Math.abs(data.ang)/2,
+        vel: data.velY + Math.abs(data.ang) / 2,
         ang: data.ang,
         fus: data.fus,
         up: data.up,
         ex: data.ex,
         exing: false,
         user: data.user,
-        /*out: '000000',
+        /* out: '000000',
         in: 'FFFFFF',*/
         id: hash,
       };
-      console.log(`temp y: ${tempRocket.y}`);
-      console.log(`user: ${tempRocket.user}`);
-      //console.log(`temp ht: ${tempRocket.ht}`);
-        //var hashSend = {hash: hash, user: tempRocket.user};
+      // console.log(`temp ht: ${tempRocket.ht}`);
+        // var hashSend = {hash: hash, user: tempRocket.user};
       io.sockets.in('room1').emit('getID', tempRocket);
       physics.addRocket(tempRocket);
     });
@@ -87,6 +86,7 @@ const setupSockets = (ioServer) => {
   });
 };
 
+// sends rockets back so that they can be drawn
 const handleFlight = (e) => {
   rockets = e;
   for (let i = 0; i < rockets.length; i++) {
@@ -98,12 +98,12 @@ const handleFlight = (e) => {
     }
   }
   io.sockets.in('room1').emit('soaring', rockets);
-    for (let i = 0; i < rockets.length; i++) {
-        if(rockets[i].ex){
-          //console.log(`explode`);
-            rockets.splice(i,1);
-        }
+  for (let i = 0; i < rockets.length; i++) {
+    if (rockets[i].ex) {
+          // console.log(`explode`);
+      rockets.splice(i, 1);
     }
+  }
 };
 
 module.exports.setupSockets = setupSockets;
