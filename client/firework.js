@@ -14,6 +14,8 @@ var inB = 255;
 
 var rocket;
 
+//these all set attributes of the rocket
+
 const setOuterColor = (e) => {
     //console.log("outter Set: " + e);
     outerColor = e;
@@ -59,6 +61,8 @@ const setFuse = (e) =>{
     console.log("fuse: " + fuse);
     minUpdate();
 }
+
+//packages all those attributes together into one rocket
 const minUpdate = () => {
     //clear canvas
     ctx2.clearRect(0, 0, canvas2.width, canvas2.height);

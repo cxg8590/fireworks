@@ -3,13 +3,14 @@ const sockets = require('./sockets.js');
 
 const rockets = []; // array of attack to handle
 const grav = 0.1;
+const fuse;
 
 // computes all physics
 const gravity = () => {
   if (rockets.length > 0) {
     for (let i = 0; i < rockets.length; i++) {
         // var force = rockets[i].vel + Math.abs(rockets[i].ang);
-      const fuse = rockets[i].fus;
+      fuse = rockets[i].fus;
         // if(fuse)
         // +console.log("fuse: " + fuse);
         // console.log("vel: " + rockets[i].vel);

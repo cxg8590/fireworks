@@ -4,11 +4,13 @@ var particles = [];
 var pool = [];
 var outSparks = [];
 
+
+//particle
 function Particle( x, y, radius ) {
             this.init( x, y, radius );
         }
 
-//Oarticle prototype, taken from sketch.js particle demo http://soulwire.github.io/sketch.js/examples/particles.html
+//Particle prototype, taken from sketch.js particle demo http://soulwire.github.io/sketch.js/examples/particles.html
 Particle.prototype = {
     init: function( x, y, radius ) {
         this.alive = true;
@@ -58,11 +60,13 @@ const spark = (roc, col) => {
     particles.push( particle );
 };
 
+//updates the particles
 const sparkUpdate = (e) => {
     e.move();
     e.draw();
 };
 
+//explode the rocket
 const explode = (roc) => {
     setTimeout(function(){
         for(var i = 0; i < launchingRockets.length; i++){
@@ -78,7 +82,7 @@ const explode = (roc) => {
     //spark(roc);
     //sparkUpdate(roc);
 };
-
+//handles explosion particles
 const outspark = (roc) => {
     for(var i = 0; i < 6; i++){
         var angle = 45 * i;
@@ -92,7 +96,7 @@ const outspark = (roc) => {
     }
     setTimeout(function(){outSparks.splice(0,6)}, 3000);
 };
-
+//updates explosion particles
 const outsparkUpdate = () => {
     
     for(var i = 0; i < outSparks.length; i++){

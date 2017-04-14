@@ -1,10 +1,12 @@
-
+//moves dummy rocket with the cursor
 const moveCurrent = (e) => {
     //console.log("mouse x: "+e.x);
     currentRocket.x = e.x - 682;
     //mainUpdate();
 };
 
+
+//sends rocket to server
 const launching = (e) => {
     //console.log("launching out: "+e.out);
     
@@ -30,6 +32,7 @@ const launching = (e) => {
         socket.emit("launch",tempPackage);
 };
 
+//main update loop
 const mainUpdate = () => {
     //clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -78,7 +81,7 @@ const mainUpdate = () => {
         spark(launchingRockets[i], launchingRockets[i].in);
         }
         
-        
+        //explosion particles
         if(launchingRockets[i].exing){
             //particles
             spark(launchingRockets[i], launchingRockets[i].out);
@@ -94,12 +97,14 @@ const mainUpdate = () => {
             //setTimeout(function(){launchingRockets.splice(i,1)}, 1000);
         }
     }
+    //handles particles
     particles.forEach(function(e){
             sparkUpdate(e);
         });
     outsparkUpdate();
 };
 
+//changes rgb to hex
 function rgb2hex(red, green, blue) {
         var rgb = blue | (green << 8) | (red << 16);
         return '#' + (0x1000000 + rgb).toString(16).slice(1);

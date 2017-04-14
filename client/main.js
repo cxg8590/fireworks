@@ -38,6 +38,7 @@ const moveHandler = (e) => {
     }
 };
 
+//main init
 const init = () => {
   
   canvas = document.querySelector('#canvas');
@@ -47,12 +48,14 @@ const init = () => {
 
   socket = io.connect();
     
+    //gets user ID
     socket.on("connectID", (data) => {
         if(userID == null){
             userID = data;
         }
     });
     
+    //gets individual rocket id
     socket.on("getID", (data) => {
         console.log("yourID: " + userID);
         console.log("Rocket userID: " + data.user);
@@ -64,6 +67,7 @@ const init = () => {
         launchingRockets[launchingRockets.length -1].id = data.id;
     });
   
+    //handles flying rocket data from server
     socket.on('soaring', (data) => {
         //console.log("soaring" + data);
         if(data != null || ""){
