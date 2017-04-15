@@ -61,10 +61,6 @@ var mainUpdate = function mainUpdate() {
         //console.log("inner color: "+launchingRockets[i].y);
         launchingRockets[i].out = rgb2hex(launchingRockets[i].outR, launchingRockets[i].outG, launchingRockets[i].outB);
         launchingRockets[i].in = rgb2hex(launchingRockets[i].inR, launchingRockets[i].inG, launchingRockets[i].inB);
-<<<<<<< HEAD
-=======
-
->>>>>>> 5036b0788e0b7db621f4d9e7119fe7f48de3c300
         if (launchingRockets[i].exing == false) {
             //outter
             ctx.fillStyle = launchingRockets[i].out;
