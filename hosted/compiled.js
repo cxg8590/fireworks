@@ -35,7 +35,7 @@ var mainUpdate = function mainUpdate() {
     //clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     var image = new Image(500, 500);
-    image.src = "https://people.rit.edu/cxg8590/realTime/fireworks/nightSky.png";
+    image.src = "http://chrisg.ismakinggames.com/realTime/fireworks/nightSky.png";
     ctx.drawImage(image, 0, 0, 500, 500);
     //console.log(currentRocket.x);
 
